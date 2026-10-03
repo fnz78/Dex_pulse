@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DexPulse - Tactical Creature Index featuring real-time stat radar charts, type matchups, gender variations, and generation roster grid." />
+  <title>DexPulse - Tactical Creature Index</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Chart.js for Radar / Spider Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Modular CSS Files -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/grid-view.css" />
+  <link rel="stylesheet" href="css/skeletons.css" />
+</head>
+<body>
+
+  <!-- INITIAL SCREEN PRELOADER -->
+  <div class="preloader-overlay" id="preloaderOverlay">
+    <div class="preloader-content">
+      <div class="preloader-spinner-wrap">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring secondary"></div>
+        <svg class="preloader-pokeball" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="90" stroke="#e74c3c" stroke-width="12"/>
+          <path d="M10 100 A90 90 0 0 1 190 100" fill="#e74c3c" opacity="0.85"/>
+          <rect x="10" y="90" width="180" height="20" fill="#142238"/>
+          <circle cx="100" cy="100" r="30" fill="#e74c3c"/>
+          <circle cx="100" cy="100" r="20" fill="#142238"/>
+          <circle cx="100" cy="100" r="10" fill="#00f2fe" class="preloader-core-glow"/>
+        </svg>
+      </div>
+      <div class="preloader-title">DEX<span>PULSE</span></div>
+      <div class="preloader-status" id="preloaderStatus">INITIALIZING TACTICAL CREATURE DATABASE…</div>
+      <div class="preloader-bar-track">
+        <div class="preloader-bar-fill" id="preloaderBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER NAVBAR -->
+  <header>
+    <div class="logo-container" onclick="window.DexApp.switchView('detail')">
+      <svg class="logo-icon" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="90" stroke="#e74c3c" stroke-width="12"/>
+        <path d="M10 100 A90 90 0 0 1 190 100" fill="#e74c3c" opacity="0.8"/>
+        <rect x="10" y="92" width="180" height="16" fill="#142238"/>
+        <circle cx="100" cy="100" r="28" fill="#e74c3c"/>
+        <circle cx="100" cy="100" r="18" fill="#142238"/>
+      </svg>
+      <div>
+        <div class="logo">DEX<span>PULSE</span></div>
+        <div class="sub-tag">TACTICAL CREATURE INDEX</div>
+      </div>
+    </div>
+
+    <!-- Autocomplete Search Wrap -->
+    <div class="search-wrap">
+      <input type="text" id="searchInput" list="pokemonDatalist" placeholder="Search by name or ID (e.g., Charizard, 6)…" autocomplete="off" />
+      <datalist id="pokemonDatalist"></datalist>
+      <button class="search-btn" id="searchBtn" title="Search">🔍</button>
+    </div>
+
+    <!-- Actions & Nav -->
+    <div class="header-actions">
+      <div class="view-toggle-group">
+        <button class="toggle-mode-btn active" id="btnDetailView" title="Detail Panel View">
+          <span>📱</span> Detail
+        </button>
+        <button class="toggle-mode-btn" id="btnGridView" title="Roster Grid View">
+          <span>⣿</span> Roster
+        </button>
+      </div>
+
+      <div class="nav-arrows">
+        <button class="nav-btn" id="prevBtn" title="Previous (Left Arrow)">◀</button>
+        <button class="nav-btn" id="nextBtn" title="Next (Right Arrow)">▶</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="app-container">
+
+    <!-- ================= DETAIL VIEW SECTION ================= -->
+    <div class="view-section" id="detailViewSection">
+      <div class="main-grid">
+
+        <!-- LEFT COLUMN: ARTWORK & CONTROL TOGGLES -->
+        <div class="left-col">
+          <div class="panel artwork-container panel-skeleton-target">
+            <div class="artwork-frame" id="artworkFrame">
+              <div class="ball-bg" id="ballBg">
+                <svg viewBox="0 0 200 200" fill="none">
+                  <circle cx="100" cy="100" r="95" stroke="white" stroke-width="6"/>
+                  <rect x="5" y="94" width="190" height="12" fill="white"/>
+                  <circle cx="100" cy="100" r="22" fill="white"/>
+                  <circle cx="100" cy="100" r="14" fill="var(--surface)"/>
+                  <path d="M5 100 A95 95 0 0 1 195 100" fill="white" opacity="0.3"/>
+                </svg>
+              </div>
+              <div class="shiny-stars" id="shinyStars"></div>
+              <div class="sprite-loader-spinner" id="spriteSpinner"></div>
+              <img class="pokemon-sprite loading" id="pokeSprite" src="" alt="Pokemon artwork" />
+            </div>
+
+            <!-- Sprite Controls (Shiny + Gender) -->
+            <div class="panel sprite-controls-panel">
+              <div class="toggles-left">
+                <!-- Shiny Toggle -->
+                <button class="shiny-btn" id="shinyBtn" title="Toggle Shiny Sprite">✦</button>
+                <div>
+                  <div class="shiny-label" id="shinyLabel">Normal</div>
+                  <div style="font-size:0.68rem;color:var(--text-muted);font-family:'Share Tech Mono',monospace;">SHINY FORM</div>
+                </div>
+
+                <!-- Gender Toggle -->
+                <button class="gender-btn male-active" id="genderBtn" title="Switch Gender Sprite (Male/Female)">
+                  <span>♂</span> Male
+                </button>
+              </div>
+
+              <div class="dex-num" id="dexNumBadge">#---</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER COLUMN: IDENTITY, MATCHUPS, EVOLUTION CHAIN -->
+        <div class="center-col">
+          
+          <!-- Identity Panel -->
+          <div class="identity-panel panel panel-skeleton-target">
+            <div class="poke-name" id="pokeName">— — —</div>
+            <div class="poke-id" id="pokeId">NO. ---</div>
+            <div class="types-row" id="typesRow"></div>
+            <div class="form-selector-wrap" id="formSelector"></div>
+          </div>
+
+          <!-- Dex Entry Panel -->
+          <div class="dex-entry-panel panel panel-skeleton-target">
+            <div class="panel-header">DEX ENTRY DATA</div>
+            <div class="dex-entry-text" id="dexEntryText">Retrieving database entries…</div>
+            <div class="dex-entry-game" id="dexEntryGame"></div>
+          </div>
+
+          <!-- Type Effectiveness & Matchups -->
+          <div class="matchups-panel panel panel-skeleton-target">
+            <div class="panel-header">DAMAGE MULTIPLIERS & MATCHUPS</div>
+            <div id="typeMatchups" style="padding-top: 8px;"></div>
+          </div>
+
+          <!-- Evolution Chain Panel -->
+          <div class="evo-panel panel panel-skeleton-target">
+            <div class="panel-header">EVOLUTION LINE</div>
+            <div class="evo-chain" id="evoChain">
+              <div class="evo-stage no-evo">Scanning evolution network…</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: ABILITIES, STAT CHART, SIZE -->
+        <div class="right-col">
+
+          <!-- Ability Panel -->
+          <div class="ability-box panel panel-skeleton-target">
+            <div class="panel-header">TALENTS & ABILITIES</div>
+            <div class="ability-list" id="abilityList"></div>
+          </div>
+
+          <!-- Base Stats Panel with Interactive Chart Toggle -->
+          <div class="stats-panel panel panel-skeleton-target">
+            <div class="panel-header">
+              <span>BASE STAT ANALYZER</span>
+              <div style="display:flex; gap:4px;">
+                <button class="chart-toggle-btn active" id="btnRadarChart">Radar</button>
+                <button class="chart-toggle-btn" id="btnStatBars">Bars</button>
+              </div>
+            </div>
+            <div class="stats-body">
+              <!-- Interactive Radar Chart -->
+              <div class="radar-chart-container" id="radarChartContainer">
+                <canvas id="statRadarCanvas"></canvas>
+              </div>
+              <!-- Linear Stat Bars -->
+              <div class="stats-grid hidden" id="statsGrid"></div>
+            </div>
+          </div>
+
+          <!-- Size Comparison Panel -->
+          <div class="size-panel panel panel-skeleton-target">
+            <div class="panel-header">PHYSICAL SPECIFICATIONS</div>
+            <div class="size-inner">
+              <div class="size-ball-icon">
+                <svg viewBox="0 0 200 200" fill="none">
+                  <circle cx="100" cy="100" r="90" stroke="white" stroke-width="8"/>
+                  <rect x="10" y="92" width="180" height="16" fill="white"/>
+                  <circle cx="100" cy="100" r="24" fill="white"/>
+                  <circle cx="100" cy="100" r="16" fill="var(--surface)"/>
+                </svg>
+              </div>
+              <div class="size-metrics">
+                <div class="size-row"><span class="size-key">HT:</span><span class="size-val" id="sizeHt">—</span></div>
+                <div class="size-row"><span class="size-key">WT:</span><span class="size-val" id="sizeWt">—</span></div>
+                <div style="font-size:0.75rem;color:var(--text-muted);font-family:'Share Tech Mono',monospace;margin-top:2px;" id="pokeGenus"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= GRID / ROSTER VIEW SECTION ================= -->
+    <div class="view-section hidden" id="gridViewSection">
+      <div class="grid-view-container">
+        
+        <!-- Roster Toolbar -->
+        <div class="roster-toolbar">
+          <div class="toolbar-group">
+            <span class="toolbar-label">Generation:</span>
+            <select class="select-custom" id="selectGen">
+              <option value="0">All Generations (1 - 9)</option>
+              <option value="1">Gen I (Kanto #1-151)</option>
+              <option value="2">Gen II (Johto #152-251)</option>
+              <option value="3">Gen III (Hoenn #252-386)</option>
+              <option value="4">Gen IV (Sinnoh #387-493)</option>
+              <option value="5">Gen V (Unova #494-649)</option>
+              <option value="6">Gen VI (Kalos #650-721)</option>
+              <option value="7">Gen VII (Alola #722-809)</option>
+              <option value="8">Gen VIII (Galar #810-905)</option>
+              <option value="9">Gen IX (Paldea #906-1025)</option>
+            </select>
+          </div>
+
+          <div class="toolbar-group">
+            <span class="toolbar-label">Sort:</span>
+            <select class="select-custom" id="selectSort">
+              <option value="id-asc">ID Number (Ascending)</option>
+              <option value="id-desc">ID Number (Descending)</option>
+              <option value="name-asc">Alphabetical (A - Z)</option>
+            </select>
+
+            <button class="filter-btn-trigger" id="filterBtnTrigger">
+              <span>⚡</span> Filter Modal
+            </button>
+          </div>
+
+          <div class="roster-count" id="rosterCount">0 Pokémon</div>
+        </div>
+
+        <!-- Roster Grid -->
+        <div class="pokemon-grid" id="pokemonGrid"></div>
+
+        <!-- Pagination Load More -->
+        <div class="roster-pagination">
+          <button class="load-more-btn" id="loadMoreBtn">LOAD MORE</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADVANCED FILTER MODAL -->
+  <div class="modal-overlay" id="filterModalOverlay">
+    <div class="filter-modal">
+      <div class="modal-header">
+        <div class="modal-title">ADVANCED ROSTER FILTER</div>
+        <button class="modal-close-btn" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="filter-section-title">Select Generation</div>
+          <div class="gen-grid">
+            <div class="gen-chip selected" data-gen="0">All Gens</div>
+            <div class="gen-chip" data-gen="1">Gen 1 (Kanto)</div>
+            <div class="gen-chip" data-gen="2">Gen 2 (Johto)</div>
+            <div class="gen-chip" data-gen="3">Gen 3 (Hoenn)</div>
+            <div class="gen-chip" data-gen="4">Gen 4 (Sinnoh)</div>
+            <div class="gen-chip" data-gen="5">Gen 5 (Unova)</div>
+            <div class="gen-chip" data-gen="6">Gen 6 (Kalos)</div>
+            <div class="gen-chip" data-gen="7">Gen 7 (Alola)</div>
+            <div class="gen-chip" data-gen="8">Gen 8 (Galar)</div>
+            <div class="gen-chip" data-gen="9">Gen 9 (Paldea)</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-reset" id="modalBtnReset">Reset Filters</button>
+        <button class="modal-btn modal-btn-apply" id="modalBtnApply">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR TOAST NOTIFICATION -->
+  <div class="error-toast" id="errorToast">Pokémon not found in database.</div>
+
+  <!-- FOOTER & LEGAL DISCLAIMER -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub Repository</a>
+      <a href="https://pokeapi.co/" target="_blank" rel="noopener">Powered by PokéAPI</a>
+    </div>
+    <div class="disclaimer-text">
+      DexPulse is an independent, non-commercial fan project created for analytical and educational purposes. Pokémon and Pokémon character names, artwork, sprites, and trademarked titles are registered trademarks and property of © Nintendo, Creatures Inc., Game Freak, and The Pokémon Company. DexPulse is not affiliated with, sponsored, or endorsed by Nintendo or Game Freak.
+    </div>
+  </footer>
+
+  <!-- Modular Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/type-calculator.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/radar-chart.js"></script>
+  <script src="js/skeleton.js"></script>
+  <script src="js/grid-view.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

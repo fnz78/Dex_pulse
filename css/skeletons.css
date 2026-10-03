@@ -1,0 +1,250 @@
+/* ============================================================
+   DEXPULSE SKELETON LOADING & INITIAL PRELOADER SYSTEM
+   ============================================================ */
+
+/* 1. FULLSCREEN INITIAL PRELOADER OVERLAY */
+.preloader-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #142238 0%, #070d17 100%);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s ease;
+  pointer-events: all;
+}
+
+.preloader-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px;
+}
+
+.preloader-spinner-wrap {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0;
+  animation: pulseRing 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.pulse-ring.secondary {
+  animation-delay: 0.6s;
+  border-color: var(--blue2);
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.preloader-pokeball {
+  width: 80px;
+  height: 80px;
+  animation: spinPoke 2.5s linear infinite;
+  filter: drop-shadow(0 0 16px var(--glow-red));
+}
+
+@keyframes spinPoke {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.preloader-core-glow {
+  animation: coreGlow 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes coreGlow {
+  0% { fill: #00f2fe; filter: drop-shadow(0 0 4px #00f2fe); }
+  100% { fill: #ff6b6b; filter: drop-shadow(0 0 12px #ff6b6b); }
+}
+
+.preloader-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-shadow: 0 0 16px var(--glow-red);
+}
+
+.preloader-title span {
+  color: var(--blue2);
+  text-shadow: 0 0 16px var(--glow-blue);
+}
+
+.preloader-status {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  min-height: 1.2rem;
+}
+
+.preloader-bar-track {
+  width: 280px;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  position: relative;
+}
+
+.preloader-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  box-shadow: 0 0 10px var(--cyan);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+
+/* 2. PANEL LOADING SKELETONS & SHIMMER OVERLAYS */
+@keyframes skeletonShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.6s infinite ease-in-out;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.skeleton-title {
+  height: 2rem;
+  width: 65%;
+  margin-bottom: 8px;
+}
+
+.skeleton-badge {
+  height: 1.4rem;
+  width: 70px;
+  border-radius: 20px;
+}
+
+.skeleton-avatar {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  height: 210px;
+  width: 100%;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite ease-in-out;
+}
+
+/* Panel loading indicator overlay */
+.panel-skeleton-target {
+  position: relative;
+  transition: opacity 0.25s ease;
+}
+
+.panel-skeleton-target.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(20, 34, 56, 0.6) 0%,
+    rgba(58, 123, 213, 0.15) 50%,
+    rgba(20, 34, 56, 0.6) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.2s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: inherit;
+}
+
+/* 3. SPRITE LOADING SPINNER */
+.sprite-loader-spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(231, 76, 60, 0.2);
+  border-top-color: var(--accent);
+  border-right-color: var(--blue2);
+  border-radius: 50%;
+  animation: spinPoke 0.8s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 5;
+}
+
+.pokemon-sprite.loading ~ .sprite-loader-spinner,
+.artwork-frame.loading .sprite-loader-spinner {
+  opacity: 1;
+}
+
+/* Skeleton state toggles on panel elements */
+.is-loading .hide-on-loading {
+  display: none !important;
+}
+
+.is-loading .show-on-loading {
+  display: flex !important;
+}
+
+.show-on-loading {
+  display: none !important;
+}
+
