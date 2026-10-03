@@ -6,14 +6,14 @@
 
 ##  Key Features
 
-- ** Detail & Roster Grid Views**: Toggle seamlessly between an analytical single-creature view and a responsive multi-generation grid roster.
-- ** Interactive Stat Radar Chart**: Visual stat distribution powered by Chart.js with an instant toggle to switch to traditional linear stat bars.
-- ** / ♀ Gender Variations**: Toggle between male and female artwork and sprites when visual gender differences exist in the PokeAPI database.
-- ** Dynamic Type Matchups**: Automatically calculates dual-type damage multipliers (4x, 2x weak; 0.5x, 0.25x resistant; 0x immune).
-- ** Search Autocomplete**: Pre-fetches database names to provide instant datalist suggestions, avoiding search errors and typos.
-- ** Skeleton Loading States**: Replaces full-screen blocking overlays with smooth contextual shimmer loading placeholders inside UI panels.
-- ** Multi-Gen & Type Filter Modal**: Filter creatures across Generations I through IX (Kanto to Paldea) with customizable sorting (ID ascending/descending, alphabetical).
-- ** Custom Cyberpunk Scrollbar & Design System**: High-contrast dark theme with red/blue neon accents and custom styled scrollbars for smooth navigation.
+- **Detail & Roster Grid Views**: Toggle seamlessly between an analytical single-creature view and a responsive multi-generation grid roster.
+- **Interactive Stat Radar Chart**: Visual stat distribution powered by Chart.js with an instant toggle to switch to traditional linear stat bars.
+- **/ ♀ Gender Variations**: Toggle between male and female artwork and sprites when visual gender differences exist in the PokeAPI database.
+- **Dynamic Type Matchups**: Automatically calculates dual-type damage multipliers (4x, 2x weak; 0.5x, 0.25x resistant; 0x immune).
+- **Search Autocomplete**: Pre-fetches database names to provide instant datalist suggestions, avoiding search errors and typos.
+- **Skeleton Loading States**: Replaces full-screen blocking overlays with smooth contextual shimmer loading placeholders inside UI panels.
+- **Multi-Gen & Type Filter Modal**: Filter creatures across Generations I through IX (Kanto to Paldea) with customizable sorting (ID ascending/descending, alphabetical).
+- **Custom Cyberpunk Scrollbar & Design System**: High-contrast dark theme with red/blue neon accents and custom styled scrollbars for smooth navigation.
 
 ---
 
